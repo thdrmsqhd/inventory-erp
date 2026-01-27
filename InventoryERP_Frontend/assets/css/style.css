@@ -1,0 +1,57 @@
+﻿/* Global layout */
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, 'Noto Sans KR', Arial, sans-serif;
+    background: #fff;
+    color: #222;
+}
+
+erp-app-root {
+    display: block;
+    height: 100%;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+.main-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid #e6e6e6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.content-body {
+    padding: 22px;
+    overflow: auto;
+    flex: 1;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #444;
+}
+
+#current-menu-title {
+    margin: 0;
+    font-size: 1.4rem;
+}

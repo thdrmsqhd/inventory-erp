@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory ERP</title>
+    <base href="/">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <script type="importmap">
+        {
+          "imports": {
+            "base": "./components/core/BaseComponent.js",
+            "services": "./services/ApiService.js",
+            "shared/": "./components/shared/",
+            "dashboard/": "./components/dashboard/",
+            "items/": "./components/items/",
+            "transactions/": "./components/transactions/",
+            "warehouse/": "./components/warehouse/",
+            "users/": "./components/users/"
+          }
+        }
+    </script>
+</head>
+<body>
+    <erp-app-root></erp-app-root>
+    <script src="/app.js" type="module"></script>
+</body>
+</html>
