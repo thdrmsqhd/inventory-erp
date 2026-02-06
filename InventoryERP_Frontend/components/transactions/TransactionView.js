@@ -3,6 +3,7 @@ import { BaseComponent } from 'base';
 import { TransactionViewModel } from './TransactionViewModel.js';
 import { TransactionListTemplate } from './TransactionListView.js';
 import { TransactionDetailTemplate } from './TransactionDetailView.js';
+import { TransactionFormTemplate } from './TransactionFormView.js';
 
 export class TransactionsMainView extends BaseComponent {
     constructor() {
@@ -48,10 +49,47 @@ export class TransactionsMainView extends BaseComponent {
                 return;
             }
 
+            if (action === 'create') {
+                this.vm.goToForm();
+                return;
+            }
+
+            if (action === 'edit') {
+                this.vm.goToForm(this.state.selectedTransaction);
+                return;
+            }
+
+            if (action === 'delete') {
+                const id = el.getAttribute('data-id');
+                if (id) this.vm.deleteTransaction(id);
+                return;
+            }
+
             if (action === 'back') {
                 this.vm.goToList();
             }
         }, { capture: true });
+
+        root.addEventListener('submit', (e) => {
+            const form = e.target;
+            if (!(form instanceof HTMLFormElement)) return;
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const data = {
+                id: formData.get('id'),
+                date: formData.get('date'),
+                type: formData.get('type'),
+                itemId: formData.get('itemId'),
+                itemName: formData.get('itemName'),
+                qty: Number(formData.get('qty')),
+                warehouse: formData.get('warehouse'),
+                worker: formData.get('worker'),
+                memo: formData.get('memo')
+            };
+
+            this.vm.saveTransaction(data);
+        });
     }
 
     render() {
@@ -75,12 +113,18 @@ export class TransactionsMainView extends BaseComponent {
             return;
         }
 
+        let content = '';
+        if (this.state.viewMode === 'list') {
+            content = TransactionListTemplate(this.state.filteredTransactions);
+        } else if (this.state.viewMode === 'detail') {
+            content = TransactionDetailTemplate(this.state.selectedTransaction);
+        } else if (this.state.viewMode === 'form') {
+            content = TransactionFormTemplate(this.state.selectedTransaction);
+        }
+
         this.innerHTML = `
             <div class="transactions-view-root">
-                ${this.state.viewMode === 'list'
-                    ? TransactionListTemplate(this.state.filteredTransactions)
-                    : TransactionDetailTemplate(this.state.selectedTransaction)
-                }
+                ${content}
             </div>
         `;
     }

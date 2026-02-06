@@ -72,5 +72,50 @@
     goToList() {
         this.view.setState({ viewMode: 'list', selectedTransaction: null });
     }
+
+    goToForm(transaction = null) {
+        this.view.setState({
+            viewMode: 'form',
+            selectedTransaction: transaction
+        });
+    }
+
+    async saveTransaction(formData) {
+        const { transactions } = this.view.state;
+        const list = Array.isArray(transactions) ? [...transactions] : [];
+        const index = list.findIndex(t => t.id === formData.id);
+
+        if (index > -1) {
+            // Update
+            list[index] = { ...list[index], ...formData };
+        } else {
+            // Create
+            list.unshift(formData);
+        }
+
+        this.view.setState({
+            transactions: list,
+            filteredTransactions: list,
+            viewMode: 'list',
+            selectedTransaction: null
+        });
+
+        // Optional: show success message
+        console.log('Transaction saved:', formData);
+    }
+
+    async deleteTransaction(id) {
+        if (!confirm('정말로 이 입출고 기록을 삭제하시겠습니까?')) return;
+
+        const { transactions } = this.view.state;
+        const list = Array.isArray(transactions) ? transactions.filter(t => t.id !== id) : [];
+
+        this.view.setState({
+            transactions: list,
+            filteredTransactions: list,
+            viewMode: 'list',
+            selectedTransaction: null
+        });
+    }
 }
 

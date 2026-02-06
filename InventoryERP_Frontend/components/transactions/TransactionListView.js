@@ -15,7 +15,12 @@ export const TransactionListTemplate = (transactions) => {
             .out { background: #e74c3c; }
         </style>
         <div class="list-card">
-            <h3>입/출고 목록</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">입/출고 목록</h3>
+                <button class="btn-create" data-action="create" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                    <i class="fas fa-plus"></i> 신규 등록
+                </button>
+            </div>
             <input type="text" class="search-bar" placeholder="입/출고 검색..." data-action="filter">
             <table class="tx-table">
                 <thead><tr><th>입/출고ID</th><th>날짜</th><th>유형</th><th>품목</th><th>수량</th><th>창고</th><th>작업자</th></tr></thead>
