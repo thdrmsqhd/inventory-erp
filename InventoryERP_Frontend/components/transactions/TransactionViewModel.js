@@ -31,12 +31,15 @@
             { id: 'WH-004', name: '부산 창고' }
         ];
 
+        const mockCurrentUser = { id: 'USR-001', name: '홍길동' };
+
         try {
             this.view.setState({
                 transactions: mockTransactions,
                 filteredTransactions: mockTransactions,
                 items: mockItems,
                 warehouses: mockWarehouses,
+                currentUser: mockCurrentUser,
                 loading: false,
                 error: null
             });

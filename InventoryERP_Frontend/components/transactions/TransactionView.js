@@ -16,6 +16,7 @@ export class TransactionsMainView extends BaseComponent {
             selectedTransaction: null,
             items: [],
             warehouses: [],
+            currentUser: null,
             loading: true,
             error: null
         };
@@ -128,7 +129,8 @@ export class TransactionsMainView extends BaseComponent {
             content = TransactionFormTemplate(
                 this.state.selectedTransaction,
                 this.state.items || [],
-                this.state.warehouses || []
+                this.state.warehouses || [],
+                this.state.currentUser
             );
         }
 

@@ -1,7 +1,8 @@
 // components/transactions/TransactionFormView.js
-export const TransactionFormTemplate = (tx = null, items = [], warehouses = []) => {
+export const TransactionFormTemplate = (tx = null, items = [], warehouses = [], currentUser = null) => {
     const isEdit = !!tx;
     const title = isEdit ? '입출고 기록 수정' : '신규 입출고 등록';
+    const workerName = tx?.worker || currentUser?.name || '';
 
     return `
         <style>
@@ -67,7 +68,7 @@ export const TransactionFormTemplate = (tx = null, items = [], warehouses = []) 
                     </div>
                     <div class="form-group">
                         <label>작업자</label>
-                        <input type="text" name="worker" value="${tx?.worker || ''}" placeholder="작업자 이름" required>
+                        <input type="text" name="worker" value="${workerName}" placeholder="작업자 이름" required>
                     </div>
                     <div class="form-group full-width">
                         <label>메모</label>
