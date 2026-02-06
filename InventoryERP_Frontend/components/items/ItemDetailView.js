@@ -30,11 +30,21 @@ export const ItemDetailTemplate = (item) => {
             .value { font-size: 1.2rem; font-weight: bold; margin-top: 5px; }
         </style>
         <div class="detail-card">
-            <div class="detail-header">
-                <button class="btn-back" data-action="back">
-                    <i class="fas fa-arrow-left"></i> 목록보기
-                </button>
-                <h2>품목 상세 정보</h2>
+            <div class="detail-header" style="justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <button class="btn-back" data-action="back">
+                        <i class="fas fa-arrow-left"></i> 목록보기
+                    </button>
+                    <h2 style="margin: 0;">품목 상세 정보</h2>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-edit" data-action="edit" data-id="${String(item?.id ?? '')}" style="background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                        <i class="fas fa-edit"></i> 수정
+                    </button>
+                    <button class="btn-delete" data-action="delete" data-id="${String(item?.id ?? '')}" style="background: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                        <i class="fas fa-trash"></i> 삭제
+                    </button>
+                </div>
             </div>
             <div class="info-grid">
                 <div class="info-item"><span class="label">품목명</span><div class="value">${String(item?.name ?? '')}</div></div>

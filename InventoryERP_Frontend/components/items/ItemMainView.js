@@ -3,13 +3,14 @@ import { BaseComponent } from 'base';
 import { ItemsViewModel } from './ItemsViewModel.js';
 import { ItemListTemplate } from './ItemListView.js';
 import { ItemDetailTemplate } from './ItemDetailView.js';
+import { ItemFormTemplate } from './ItemFormView.js';
 
 export class ItemsMainView extends BaseComponent {
     constructor() {
         super();
         this.vm = new ItemsViewModel(this);
         this.state = { 
-            viewMode: 'list', // 'list' 또는 'detail'
+            viewMode: 'list', // 'list', 'detail', 'form'
             items: [], 
             filteredItems: [], 
             selectedItem: null,
@@ -48,15 +49,36 @@ export class ItemsMainView extends BaseComponent {
                 return;
             }
 
-            if (action === 'back') {
+            if (action === 'create') {
+                this.vm.goToForm();
+            } else if (action === 'edit') {
+                const id = el.getAttribute('data-id');
+                this.vm.goToForm(id);
+            } else if (action === 'delete') {
+                const id = el.getAttribute('data-id');
+                if (id && confirm('정말 이 품목을 삭제하시겠습니까?')) {
+                    this.vm.deleteItem(id);
+                }
+            } else if (action === 'back') {
                 this.vm.goToList();
-                return;
             }
-        }, { capture: true });
+        });
+
+        root.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const form = e.target;
+            if (form.id === 'item-form') {
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                this.vm.saveItem(data);
+            }
+        });
     }
 
     render() {
-        if (this.state.loading) {
+        const { viewMode, items, filteredItems, selectedItem, loading, error } = this.state;
+
+        if (loading) {
             this.innerHTML = `
                 <div class="items-view-root">
                     <div style="padding: 16px;">로딩 중...</div>
@@ -65,24 +87,34 @@ export class ItemsMainView extends BaseComponent {
             return;
         }
 
-        if (this.state.error) {
+        if (error) {
             this.innerHTML = `
                 <div class="items-view-root">
                     <div style="padding: 16px; color: #c0392b;">
-                        데이터를 불러오는 중 오류가 발생했습니다: ${String(this.state.error)}
+                        데이터를 불러오는 중 오류가 발생했습니다: ${String(error)}
                     </div>
                 </div>
             `;
             return;
         }
 
-        // 현재 화면 모드(viewMode)에 따라 목록 또는 상세 화면을 표시합니다.
+        let content = '';
+        switch (viewMode) {
+            case 'detail':
+                content = ItemDetailTemplate(selectedItem);
+                break;
+            case 'form':
+                content = ItemFormTemplate(selectedItem);
+                break;
+            case 'list':
+            default:
+                content = ItemListTemplate(filteredItems);
+                break;
+        }
+
         this.innerHTML = `
             <div class="items-view-root">
-                ${this.state.viewMode === 'list' 
-                    ? ItemListTemplate(this.state.filteredItems) 
-                    : ItemDetailTemplate(this.state.selectedItem)
-                }
+                ${content}
             </div>
         `;
     }

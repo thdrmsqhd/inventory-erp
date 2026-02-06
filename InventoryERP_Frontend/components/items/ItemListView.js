@@ -11,7 +11,12 @@ export const ItemListTemplate = (items) => {
             .search-bar { margin-bottom: 20px; padding: 10px; width: 100%; border: 1px solid #ddd; border-radius: 6px; }
         </style>
         <div class="list-card">
-            <h3>품목 목록</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">품목 목록</h3>
+                <button class="btn-create" data-action="create" style="background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                    <i class="fas fa-plus"></i> 신규 품목 등록
+                </button>
+            </div>
             <input type="text" class="search-bar" placeholder="품목 검색..." data-action="filter">
             <table class="item-table">
                 <thead><tr><th>코드</th><th>품목명</th><th>카테고리</th><th>재고</th></tr></thead>
