@@ -6,17 +6,37 @@
     async loadTransactions() {
         this.view.setState({ loading: true, error: null });
 
-        // 나중에 예: const txs = await this.view.fetchAPI('/api/transactions');
+        // 실무 예시:
+        // const [txs, items, whs] = await Promise.all([
+        //     this.view.fetchAPI('/api/transactions'),
+        //     this.view.fetchAPI('/api/items'),
+        //     this.view.fetchAPI('/api/warehouses')
+        // ]);
+
         const mockTransactions = [
-            { id: 'TRX-001', date: '2026-01-20', type: '입고', itemId: 'ITM-001', itemName: '샘플 상품 A', qty: 50, warehouse: '서울 1번 창고', worker: '홍길동', memo: '초기 입고' },
-            { id: 'TRX-002', date: '2026-01-15', type: '출고', itemId: 'ITM-002', itemName: '샘플 컨트롤러 v2', qty: 10, warehouse: '서울 2번 창고', worker: '이순신', memo: '프로젝트 출고' },
-            { id: 'TRX-003', date: '2026-01-10', type: '입고', itemId: 'ITM-003', itemName: 'GPIO 확장 보드', qty: 20, warehouse: '인천 창고', worker: '홍길동', memo: '' }
+            { id: 'TRX-001', date: '2026-01-20', type: '입고', itemId: 'ITM-001', itemName: '샘플 상품 A', qty: 50, warehouseId: 'WH-001', warehouse: '서울 1번 창고', worker: '홍길동', memo: '초기 입고' },
+            { id: 'TRX-002', date: '2026-01-15', type: '출고', itemId: 'ITM-002', itemName: '샘플 컨트롤러 v2', qty: 10, warehouseId: 'WH-002', warehouse: '서울 2번 창고', worker: '이순신', memo: '프로젝트 출고' }
+        ];
+
+        const mockItems = [
+            { id: 'ITM-001', name: '샘플 상품 A' },
+            { id: 'ITM-002', name: '샘플 컨트롤러 v2' },
+            { id: 'ITM-003', name: 'GPIO 확장 보드' }
+        ];
+
+        const mockWarehouses = [
+            { id: 'WH-001', name: '서울 1번 창고' },
+            { id: 'WH-002', name: '서울 2번 창고' },
+            { id: 'WH-003', name: '인천 창고' },
+            { id: 'WH-004', name: '부산 창고' }
         ];
 
         try {
             this.view.setState({
                 transactions: mockTransactions,
                 filteredTransactions: mockTransactions,
+                items: mockItems,
+                warehouses: mockWarehouses,
                 loading: false,
                 error: null
             });

@@ -14,6 +14,8 @@ export class TransactionsMainView extends BaseComponent {
             transactions: [],
             filteredTransactions: [],
             selectedTransaction: null,
+            items: [],
+            warehouses: [],
             loading: true,
             error: null
         };
@@ -76,14 +78,18 @@ export class TransactionsMainView extends BaseComponent {
             e.preventDefault();
 
             const formData = new FormData(form);
+            const itemParts = (formData.get('itemInfo') || '').split('|');
+            const whParts = (formData.get('warehouseInfo') || '').split('|');
+
             const data = {
                 id: formData.get('id'),
                 date: formData.get('date'),
                 type: formData.get('type'),
-                itemId: formData.get('itemId'),
-                itemName: formData.get('itemName'),
+                itemId: itemParts[0] || '',
+                itemName: itemParts[1] || '',
                 qty: Number(formData.get('qty')),
-                warehouse: formData.get('warehouse'),
+                warehouseId: whParts[0] || '',
+                warehouse: whParts[1] || '',
                 worker: formData.get('worker'),
                 memo: formData.get('memo')
             };
@@ -119,7 +125,11 @@ export class TransactionsMainView extends BaseComponent {
         } else if (this.state.viewMode === 'detail') {
             content = TransactionDetailTemplate(this.state.selectedTransaction);
         } else if (this.state.viewMode === 'form') {
-            content = TransactionFormTemplate(this.state.selectedTransaction);
+            content = TransactionFormTemplate(
+                this.state.selectedTransaction,
+                this.state.items || [],
+                this.state.warehouses || []
+            );
         }
 
         this.innerHTML = `

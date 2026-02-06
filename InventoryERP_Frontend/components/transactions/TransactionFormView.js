@@ -1,5 +1,5 @@
 // components/transactions/TransactionFormView.js
-export const TransactionFormTemplate = (tx = null) => {
+export const TransactionFormTemplate = (tx = null, items = [], warehouses = []) => {
     const isEdit = !!tx;
     const title = isEdit ? '입출고 기록 수정' : '신규 입출고 등록';
 
@@ -40,25 +40,29 @@ export const TransactionFormTemplate = (tx = null) => {
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>품목 코드</label>
-                        <input type="text" name="itemId" value="${tx?.itemId || ''}" placeholder="예: ITM-001" required>
-                    </div>
-                    <div class="form-group">
-                        <label>품목명</label>
-                        <input type="text" name="itemName" value="${tx?.itemName || ''}" placeholder="품목명을 입력하세요" required>
+                        <label>품목 선택</label>
+                        <select name="itemInfo" required>
+                            <option value="">품목을 선택하세요</option>
+                            ${items.map(item => `
+                                <option value="${item.id}|${item.name}" ${tx?.itemId === item.id ? 'selected' : ''}>
+                                    [${item.id}] ${item.name}
+                                </option>
+                            `).join('')}
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>수량</label>
                         <input type="number" name="qty" value="${tx?.qty || 0}" min="1" required>
                     </div>
                     <div class="form-group">
-                        <label>창고</label>
-                        <select name="warehouse" required>
-                            <option value="">선택하세요</option>
-                            <option value="서울 1번 창고" ${tx?.warehouse === '서울 1번 창고' ? 'selected' : ''}>서울 1번 창고</option>
-                            <option value="서울 2번 창고" ${tx?.warehouse === '서울 2번 창고' ? 'selected' : ''}>서울 2번 창고</option>
-                            <option value="인천 창고" ${tx?.warehouse === '인천 창고' ? 'selected' : ''}>인천 창고</option>
-                            <option value="부산 창고" ${tx?.warehouse === '부산 창고' ? 'selected' : ''}>부산 창고</option>
+                        <label>창고 선택</label>
+                        <select name="warehouseInfo" required>
+                            <option value="">창고를 선택하세요</option>
+                            ${warehouses.map(wh => `
+                                <option value="${wh.id}|${wh.name}" ${tx?.warehouseId === wh.id ? 'selected' : ''}>
+                                    ${wh.name}
+                                </option>
+                            `).join('')}
                         </select>
                     </div>
                     <div class="form-group">
