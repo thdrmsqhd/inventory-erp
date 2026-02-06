@@ -6,11 +6,11 @@
     async loadUsers() {
         this.view.setState({ loading: true, error: null });
 
-        // 나중에 예: const users = await this.view.fetchAPI('/api/users');
         const mockUsers = [
-            { id: 'USR-001', name: '홍길동', role: '관리자', department: '운영', email: 'hong@example.com', phone: '010-1111-2222', status: '활성' },
-            { id: 'USR-002', name: '이순신', role: '창고관리자', department: '물류', email: 'lee@example.com', phone: '010-3333-4444', status: '활성' },
-            { id: 'USR-003', name: '김철수', role: '영업', department: '영업', email: 'kim@example.com', phone: '010-5555-6666', status: '비활성' }
+            { id: 'USR-001', name: '홍길동', role: 'Master', department: '운영본부', email: 'hong@example.com', phone: '010-1111-2222', status: '활성' },
+            { id: 'USR-002', name: '이순신', role: 'Operator', department: '물류팀', email: 'lee@example.com', phone: '010-3333-4444', status: '활성' },
+            { id: 'USR-003', name: '김철수', role: 'Viewer', department: '영업팀', email: 'kim@example.com', phone: '010-5555-6666', status: '비활성' },
+            { id: 'USR-004', name: '박민지', role: 'Operator', department: '운영본부', email: 'park@example.com', phone: '010-7777-8888', status: '대기' }
         ];
 
         try {
@@ -70,6 +70,46 @@
 
     goToList() {
         this.view.setState({ viewMode: 'list', selectedUser: null });
+    }
+
+    goToForm(user = null) {
+        this.view.setState({
+            viewMode: 'form',
+            selectedUser: user
+        });
+    }
+
+    async saveUser(formData) {
+        const { users } = this.view.state;
+        const list = Array.isArray(users) ? [...users] : [];
+        const index = list.findIndex(u => u.id === formData.id);
+
+        if (index > -1) {
+            list[index] = { ...list[index], ...formData };
+        } else {
+            list.unshift(formData);
+        }
+
+        this.view.setState({
+            users: list,
+            filteredUsers: list,
+            viewMode: 'list',
+            selectedUser: null
+        });
+    }
+
+    async deleteUser(id) {
+        if (!confirm('이 사용자를 삭제하시겠습니까? 데이터 정합성을 위해 가급적 "비활성" 상태로 변경하는 것을 권장합니다.')) return;
+
+        const { users } = this.view.state;
+        const list = Array.isArray(users) ? users.filter(u => u.id !== id) : [];
+
+        this.view.setState({
+            users: list,
+            filteredUsers: list,
+            viewMode: 'list',
+            selectedUser: null
+        });
     }
 }
 

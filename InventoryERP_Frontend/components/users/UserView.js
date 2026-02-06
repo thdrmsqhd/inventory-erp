@@ -3,6 +3,7 @@ import { BaseComponent } from 'base';
 import { UserViewModel } from './UserViewModel.js';
 import { UserListTemplate } from './UserListView.js';
 import { UserDetailTemplate } from './UserDetailView.js';
+import { UserFormTemplate } from './UserFormView.js';
 
 export class UserMainView extends BaseComponent {
     constructor() {
@@ -48,10 +49,36 @@ export class UserMainView extends BaseComponent {
                 return;
             }
 
+            if (action === 'create') {
+                this.vm.goToForm();
+                return;
+            }
+
+            if (action === 'edit') {
+                this.vm.goToForm(this.state.selectedUser);
+                return;
+            }
+
+            if (action === 'delete') {
+                const id = el.getAttribute('data-id');
+                if (id) this.vm.deleteUser(id);
+                return;
+            }
+
             if (action === 'back') {
                 this.vm.goToList();
             }
         }, { capture: true });
+
+        root.addEventListener('submit', (e) => {
+            const form = e.target;
+            if (!(form instanceof HTMLFormElement)) return;
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            this.vm.saveUser(data);
+        });
     }
 
     render() {
@@ -75,12 +102,18 @@ export class UserMainView extends BaseComponent {
             return;
         }
 
+        let content = '';
+        if (this.state.viewMode === 'list') {
+            content = UserListTemplate(this.state.filteredUsers);
+        } else if (this.state.viewMode === 'detail') {
+            content = UserDetailTemplate(this.state.selectedUser);
+        } else if (this.state.viewMode === 'form') {
+            content = UserFormTemplate(this.state.selectedUser);
+        }
+
         this.innerHTML = `
             <div class="users-view-root">
-                ${this.state.viewMode === 'list'
-                    ? UserListTemplate(this.state.filteredUsers)
-                    : UserDetailTemplate(this.state.selectedUser)
-                }
+                ${content}
             </div>
         `;
     }
