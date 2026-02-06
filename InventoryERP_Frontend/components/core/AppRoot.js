@@ -11,8 +11,9 @@ export class AppRoot extends BaseComponent {
     }
 
     connectedCallback() {
-        this.render();
+        this.renderLayout();
         this.initEventListeners();
+        this.updateContent();
     }
 
     /**
@@ -23,10 +24,11 @@ export class AppRoot extends BaseComponent {
             const { tag, title } = e.detail;
             
             // 상태 업데이트 (타이틀과 컨텐츠 태그 변경)
-            this.setState({
+            this.state = Object.assign({}, this.state, {
                 currentTitle: title,
                 currentTag: tag
             });
+            this.updateContent();
         });
     }
 
@@ -46,12 +48,16 @@ export class AppRoot extends BaseComponent {
             });
         };
         
-        setInterval(update, 1000);
+        this.clockInterval = setInterval(update, 1000);
         update();
     }
 
-    // 상태가 변경될 때마다 실행되어 UI를 갱신합니다.
-    render() {
+    disconnectedCallback() {
+        if (this.clockInterval) clearInterval(this.clockInterval);
+    }
+
+    // 초기 레이아웃 1회 렌더링
+    renderLayout() {
         this.innerHTML = `
             <div class="container">
                 <inventory-sidebar></inventory-sidebar>
@@ -66,13 +72,28 @@ export class AppRoot extends BaseComponent {
                     </header>
                     
                     <div id="content-area" class="content-body">
-                        <${this.state.currentTag}></${this.state.currentTag}>
+                        <!-- Content will be injected here -->
                     </div>
                 </main>
             </div>
         `;
-
         this.startClock();
+    }
+
+    // 상태 변경 시 콘텐츠 영역만 갱신
+    updateContent() {
+        const titleEl = this.querySelector('#current-menu-title');
+        const contentArea = this.querySelector('#content-area');
+        
+        if (titleEl) titleEl.innerText = this.state.currentTitle;
+        if (contentArea) {
+            contentArea.innerHTML = `<${this.state.currentTag}></${this.state.currentTag}>`;
+        }
+    }
+
+    render() {
+        // BaseComponent requirements: usually called by setState.
+        // But here we use manual update logic for performance/state preservation.
     }
 }
 

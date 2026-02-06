@@ -2,6 +2,7 @@
 import { WarehouseViewModel } from './WarehouseViewModel.js';
 import { WarehouseListTemplate } from './WarehouseListView.js';
 import { WarehouseDetailTemplate } from './WarehouseDetailView.js';
+import { WarehouseFormTemplate } from './WarehouseFormView.js';
 
 export class WarehouseView extends BaseComponent {
     constructor() {
@@ -17,76 +18,90 @@ export class WarehouseView extends BaseComponent {
         };
     }
 
-    connectedCallback() {
-        this.vm.loadWarehouses();
+    async connectedCallback() {
+        this.render();
+        await this.vm.loadWarehouses();
     }
 
-    afterRender() {
+    initEventListeners() {
         const root = this.querySelector('.warehouse-view-root');
-        if (!root) return;
+        if (!root || root.dataset.listenersBound) return;
 
-        if (root.dataset.listenersBound === 'true') return;
-        root.dataset.listenersBound = 'true';
+        root.addEventListener('click', (e) => {
+            const el = e.target.closest('[data-action]');
+            if (!el) return;
 
-        root.addEventListener('input', (e) => {
-            const target = e.target;
-            if (!(target instanceof HTMLInputElement)) return;
-            if (target.matches('[data-action="filter"]')) {
-                this.vm.filterWarehouses(target.value);
+            const action = el.dataset.action;
+            if (action === 'select') {
+                const id = el.dataset.id;
+                this.vm.selectWarehouse(id);
+            } else if (action === 'back') {
+                this.vm.goToList();
+            } else if (action === 'filter') {
+                // handled by input event if needed
+            } else if (action === 'create') {
+                this.vm.goToForm();
+            } else if (action === 'edit') {
+                const id = el.dataset.id;
+                this.vm.goToForm(id);
+            } else if (action === 'delete') {
+                const id = el.dataset.id;
+                if (id && confirm('정말 삭제하시겠습니까?')) {
+                    this.vm.deleteWarehouse(id);
+                }
             }
         });
 
-        root.addEventListener('click', (e) => {
-            const el = e.target instanceof Element ? e.target.closest('[data-action]') : null;
-            if (!el) return;
-            const action = el.getAttribute('data-action');
-
-            if (action === 'select') {
-                const id = el.getAttribute('data-id');
-                if (id) this.vm.selectWarehouse(id);
-                return;
+        root.addEventListener('input', (e) => {
+            const el = e.target.closest('[data-action="filter"]');
+            if (el) {
+                this.vm.filterWarehouses(el.value);
             }
+        });
 
-            if (action === 'back') {
-                this.vm.goToList();
-            }
-        }, { capture: true });
+        root.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            this.vm.saveWarehouse(data);
+        });
+
+        root.dataset.listenersBound = 'true';
     }
 
     render() {
-        const { loading, error } = this.state;
+        const { viewMode, warehouses, filteredWarehouses, selectedWarehouse, loading, error } = this.state;
 
+        let content = '';
         if (loading) {
-            this.innerHTML = `
-                <div class="warehouse-view-root">
-                    <div style="padding: 16px;">로딩 중...</div>
-                </div>
-            `;
-            return;
-        }
-
-        if (error) {
-            this.innerHTML = `
-                <div class="warehouse-view-root">
-                    <div style="padding: 16px; color: #c0392b;">
-                        데이터를 불러오는 중 오류가 발생했습니다: ${String(error)}
-                    </div>
-                </div>
-            `;
-            return;
+            content = '<div class="loader">창고 정보를 불러오는 중...</div>';
+        } else if (error) {
+            content = `<div class="error-msg">${error}</div>`;
+        } else {
+            switch (viewMode) {
+                case 'detail':
+                    content = WarehouseDetailTemplate(selectedWarehouse);
+                    break;
+                case 'form':
+                    content = WarehouseFormTemplate(selectedWarehouse);
+                    break;
+                case 'list':
+                default:
+                    content = WarehouseListTemplate(filteredWarehouses, this.vm);
+                    break;
+            }
         }
 
         this.innerHTML = `
             <div class="warehouse-view-root">
-                ${this.state.viewMode === 'list'
-                    ? WarehouseListTemplate(this.state.filteredWarehouses, this.vm)
-                    : WarehouseDetailTemplate(this.state.selectedWarehouse)
-                }
+                ${content}
             </div>
         `;
+
+        this.initEventListeners();
     }
 }
-if (!customElements.get('inventory-warehouse')) {
-    customElements.define('inventory-warehouse', WarehouseView);
-}
+
+customElements.define('inventory-warehouse', WarehouseView);
 

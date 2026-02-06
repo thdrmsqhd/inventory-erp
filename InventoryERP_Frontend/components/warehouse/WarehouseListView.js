@@ -35,7 +35,12 @@ export const WarehouseListTemplate = (warehouses, vm) => {
         </style>
 
         <div class="list-card">
-            <h3>창고 목록</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">창고 목록</h3>
+                <button class="btn-create" data-action="create" style="background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                    <i class="fas fa-plus"></i> 신규 창고 등록
+                </button>
+            </div>
             <input type="text" class="search-bar" placeholder="창고 검색..." data-action="filter">
 
             <div class="grid">
@@ -45,12 +50,12 @@ export const WarehouseListTemplate = (warehouses, vm) => {
                     return `
                         <div class="wh-card" style="border-top-color: ${color}">
                             <div class="wh-header">
-                                <span class="wh-name">${String(wh?.name ?? '')}</span>
-                                <span class="wh-type">${String(wh?.type ?? '')}</span>
+                                <span class="wh-name">${wh?.name || ''}</span>
+                                <span class="wh-type">${wh?.type || ''}</span>
                             </div>
                             <div class="wh-info">
-                                <div><i class="fas fa-id-badge"></i> ${String(wh?.id ?? '')}</div>
-                                <div><i class="fas fa-map-marker-alt"></i> ${String(wh?.location ?? '')}</div>
+                                <div><i class="fas fa-id-badge"></i> ${wh?.id || ''}</div>
+                                <div><i class="fas fa-map-marker-alt"></i> ${wh?.location || ''}</div>
                             </div>
                             <div class="capacity-section">
                                 <div class="capacity-label">
@@ -61,7 +66,7 @@ export const WarehouseListTemplate = (warehouses, vm) => {
                                     <div class="progress-fill" style="width: ${Math.min(100, Math.max(0, cap))}%; background: ${color};"></div>
                                 </div>
                             </div>
-                            <button class="btn-detail" data-action="select" data-id="${String(wh?.id ?? '')}">
+                            <button class="btn-detail" data-action="select" data-id="${wh?.id || ''}">
                                 상세 보기
                             </button>
                         </div>
