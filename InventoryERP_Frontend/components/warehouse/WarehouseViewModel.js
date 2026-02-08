@@ -1,4 +1,6 @@
-﻿export class WarehouseViewModel {
+﻿import { ApiService } from "../../services/ApiService";
+
+export class WarehouseViewModel {
     constructor(view) {
         this.view = view;
     }
@@ -66,7 +68,7 @@
         this.view.setState({ viewMode: 'form', selectedWarehouse: target });
     }
 
-    saveWarehouse(formData) {
+    async saveWarehouse(formData) {
         const { warehouses } = this.view.state;
         const id = formData.id;
         
@@ -75,25 +77,34 @@
             capacity: Number(formData.capacity ?? 0)
         };
 
-        const existingIdx = warehouses.findIndex(w => w.id === id);
-        let newList = [...warehouses];
-
-        if (existingIdx > -1) {
-            newList[existingIdx] = processed;
-        } else {
-            if (warehouses.some(w => w.id === id)) {
-                alert('이미 존재하는 창고 코드입니다.');
+        try {
+            // 백엔드 API 호출 (await 추가)
+            const result = await ApiService.fetchSaveWarehouse(processed);
+            
+            if (!result) {
+                alert('저장에 실패했습니다. 백엔드 서버 상태를 확인하세요.');
                 return;
             }
-            newList.push(processed);
-        }
 
-        this.view.setState({
-            warehouses: newList,
-            filteredWarehouses: newList,
-            viewMode: 'list',
-            selectedWarehouse: null
-        });
+            const newList = [...result.warehouses];
+            const existingIdx = newList.findIndex(w => w.id === id);
+
+            if (existingIdx > -1) {
+                newList[existingIdx] = processed;
+            } else {
+                newList.push(processed);
+            }
+
+            this.view.setState({
+                warehouses: newList,
+                filteredWarehouses: newList,
+                viewMode: 'list',
+                selectedWarehouse: null
+            });
+        } catch (err) {
+            console.error('Save error:', err);
+            alert('오류가 발생했습니다.');
+        }
     }
 
     deleteWarehouse(warehouseId) {

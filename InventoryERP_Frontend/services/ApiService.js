@@ -21,5 +21,25 @@
             ];
         }
     }
+
+    static async fetchSaveWarehouse(warehouseData) {
+        try {
+            const response = await fetch('/api/warehouses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(warehouseData)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Server responded with ${response.status}`);
+            }
+            
+            // 백엔드에서 저장된 데이터 또는 전체 목록을 반환한다고 가정
+            return await response.json();
+        } catch (error) {
+            console.error('ApiService.fetchSaveWarehouse error', error);
+            return null;
+        }
+    }
 }
 

@@ -4,6 +4,7 @@ project(InventoryERP)
 set(CMAKE_CXX_STANDARD 17)
 
 # 1. GTest와 Thread는 CMake 설정 파일이 잘 제공되므로 그대로 둡니다.
+find_package(nlohmann_json REQUIRED)
 find_package(GTest REQUIRED)
 find_package(Threads REQUIRED)
 find_package(PkgConfig REQUIRED)
@@ -26,10 +27,19 @@ target_include_directories(InventoryCore INTERFACE include)
 add_executable(unit_tests 
 	tests/unit/test_inventory_manager.cpp
 	tests/integration/db/test_db_conn.cpp
+    src/repository/DatabaseManager.cpp
 )
 # GTest는 pthread(Threads)가 반드시 필요하므로 함께 링크합니다.
 target_link_libraries(unit_tests ${MARIADB_LIBRARIES} GTest::gtest_main GTest::gtest Threads::Threads InventoryCore)
 
 # 5. 메인 WAS 앱 (InventoryApp)
-add_executable(InventoryApp src/main.cpp)
-target_link_libraries(InventoryApp ${MARIADB_LIBRARIES} Threads::Threads)
+file(GLOB_RECURSE APP_SOURCES 
+    "src/main.cpp"
+    "src/repository/*.cpp"
+    "src/web/controller/*.cpp"
+    "src/web/services/*.cpp"
+    "src/web/repository/*.cpp"
+)
+
+add_executable(InventoryApp ${APP_SOURCES})
+target_link_libraries(InventoryApp ${MARIADB_LIBRARIES} Threads::Threads nlohmann_json::nlohmann_json)

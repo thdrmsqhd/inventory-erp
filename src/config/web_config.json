@@ -1,0 +1,10 @@
+{
+    "di": {
+        "services": [
+            {
+                "name": "warehouse_service",
+                "implementation": "WarehouseService"
+            }
+        ]
+    }
+}
