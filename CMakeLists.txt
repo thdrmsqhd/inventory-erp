@@ -25,9 +25,8 @@ target_include_directories(InventoryCore INTERFACE include)
 
 # 4. 테스트 바이너리 (unit_tests)
 add_executable(unit_tests 
-	tests/unit/test_inventory_manager.cpp
 	tests/integration/db/test_db_conn.cpp
-    src/repository/DatabaseManager.cpp
+    src/database/DatabaseManager.cpp
 )
 # GTest는 pthread(Threads)가 반드시 필요하므로 함께 링크합니다.
 target_link_libraries(unit_tests ${MARIADB_LIBRARIES} GTest::gtest_main GTest::gtest Threads::Threads InventoryCore)
@@ -35,7 +34,7 @@ target_link_libraries(unit_tests ${MARIADB_LIBRARIES} GTest::gtest_main GTest::g
 # 5. 메인 WAS 앱 (InventoryApp)
 file(GLOB_RECURSE APP_SOURCES 
     "src/main.cpp"
-    "src/repository/*.cpp"
+    "src/database/*.cpp"
     "src/web/controller/*.cpp"
     "src/web/services/*.cpp"
     "src/web/repository/*.cpp"

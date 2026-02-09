@@ -1,21 +1,26 @@
 #include "web/controller/WarehouseController.h"
+#include "web/di/ComponentRegistry.h"
 
 using namespace crow;
 
-namespace web {
+namespace web::controller {
 
 Blueprint WarehouseController::getBlueprint() {
     Blueprint bp("api/warehouses");
 
     CROW_BP_ROUTE(bp, "/")([this](){
-        warehouseService.getAllWarehouses();
+        std::vector<web::dto::WarehouseDTO> warehouses = warehouseService.getAllWarehouses();
         json::wvalue x;
-        x["warehouses"][0]["id"] = 1;
-        x["warehouses"][0]["name"] = "Main Warehouse (Blueprint)";
-        x["warehouses"][0]["location"] = "1234 Inventory St.";
-        x["warehouses"][1]["id"] = 2;
-        x["warehouses"][1]["name"] = "Secondary Warehouse (Blueprint)";
-        x["warehouses"][1]["location"] = "5678 Supply Ave.";
+        x["warehouses"] = json::wvalue::list();
+        
+        for (size_t i = 0; i < warehouses.size(); ++i) {
+            json::wvalue w;
+            w["id"] = warehouses[i].id;
+            w["name"] = warehouses[i].name;
+            w["location"] = warehouses[i].location;
+            w["capacity"] = warehouses[i].capacity;
+            x["warehouses"][i] = std::move(w);
+        }
         
         response res(x);
         res.add_header("Access-Control-Allow-Origin", "*");
@@ -35,6 +40,6 @@ Blueprint WarehouseController::getBlueprint() {
     return bp;
 }
 
-} // namespace web
+} // namespace web::controller
 
 static web::di::ComponentRegistry<web::controller::WarehouseController> regist("WarehouseController");

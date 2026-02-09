@@ -1,12 +1,13 @@
 #include <gtest/gtest.h>
-#include "core/ConfigManager.h"
-#include "repository/DatabaseManager.h"
+#include "config/ConfigManager.h"
+#include "database/DatabaseManager.h"
 
 TEST(DatabaseTest, ConnectionTest) {
-	auto& config = ConfigManager::getInstance();
-
-	config.loadEnv("../.env");
-
-	DatabaseManager db;
-	EXPECT_TRUE(db.connect());
+	auto& db = DatabaseManager::getInstance();
+    db.initPool(1);
+	MYSQL* conn = db.getConnection();
+	EXPECT_NE(conn, nullptr);
+    if (conn) {
+        db.releaseConnection(conn);
+    }
 }

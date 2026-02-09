@@ -1,6 +1,7 @@
-#ifndef WEB_SERVICES_IMPL_WAREHOUSESERVICE_CPP
-#define WEB_SERVICES_IMPL_WAREHOUSESERVICE_CPP
+#include "web/services/impl/WarehouseService.h"
+#include "web/di/ComponentRegistry.h"
 
+namespace web::services::impl {
 
 std::vector<web::dto::WarehouseDTO> WarehouseService:: getAllWarehouses() {
     std::vector<web::dto::WarehouseDTO> warehouses;
@@ -8,5 +9,6 @@ std::vector<web::dto::WarehouseDTO> WarehouseService:: getAllWarehouses() {
     return warehouses;
 }
 
+} // namespace web::services::impl
+
 static web::di::ComponentRegistry<web::services::impl::WarehouseService> regist("warehouse_service");
-#endif // WEB_SERVICES_IMPL_WAREHOUSESERVICE_CPP

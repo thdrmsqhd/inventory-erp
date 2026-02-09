@@ -9,7 +9,7 @@ namespace web::di {
     public:
         ComponentRegistry(const std::string& name) {
             DIContainer::registerFactoryCreator(name, []() {
-                return std::make_unique<T>();
+                return std::unique_ptr<Component>(new T());
             });
         }
     };

@@ -1,8 +1,9 @@
 #include "web/controller/ItemController.h"
+#include "web/di/ComponentRegistry.h"
 
 using namespace crow;
 
-namespace web {
+namespace web::controller {
 
 Blueprint ItemController::getBlueprint() {
     Blueprint bp("api/items");
@@ -24,4 +25,6 @@ Blueprint ItemController::getBlueprint() {
     return bp;
 }
 
-} // namespace web
+} // namespace web::controller
+
+static web::di::ComponentRegistry<web::controller::ItemController> regist("ItemController");

@@ -5,16 +5,14 @@
 #include "web/controller/BaseController.h"
 #include "web/services/interfaces/IWarehouseService.h"
 
-using web::di;
-
 namespace web::controller {
-    class WarehouseController : public BaseController, public di::Component {
+    class WarehouseController : public BaseController {
     private:
-        IWarehouseService& warehouseService;
+        services::interfaces::IWarehouseService& warehouseService;
 
     public:
-        WarehouseController(): warehouseService(*static_cast<IWarehouseService*>(
-            DIContainer::getInstance("warehouse_service")
+        WarehouseController(): warehouseService(*dynamic_cast<services::interfaces::IWarehouseService*>(
+            web::di::DIContainer::getContainer().getInstance("warehouse_service")
         )) {}
         crow::Blueprint getBlueprint() override;
     };

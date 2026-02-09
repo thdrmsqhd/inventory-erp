@@ -1,11 +1,12 @@
-#ifndef INVENTORY_ERP_SRC_WEB_REPOSITORY_IMPL_WAREHOUSEREPOSITORY_CPP_
-#define INVENTORY_ERP_SRC_WEB_REPOSITORY_IMPL_WAREHOUSEREPOSITORY_CPP_
+#include "web/repository/impl/WarehouseRepository.h"
+#include "database/ConnectionGuard.hpp"
+#include "web/di/ComponentRegistry.h"
 
 namespace web::repository::impl {
     std::vector<web::dto::WarehouseDTO> WarehouseRepository::findAll() {
         std::vector<web::dto::WarehouseDTO> warehouses;
 
-        ConnectionGuard conn;
+        database::ConnectionGuard conn;
         
         if (mysql_query(conn.get(), "SELECT id, name, location, capacity FROM warehouses") != 0) {
             return warehouses;
@@ -29,5 +30,5 @@ namespace web::repository::impl {
     }
 }
 
-#endif // INVENTORY_ERP_SRC_WEB_REPOSITORY_IMPL_WAREHOUSEREPOSITORY_CPP_
+static web::di::ComponentRegistry<web::repository::impl::WarehouseRepository> regist("warehouse_repository");
 
